@@ -1,17 +1,23 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
+
   <groupId>org.gk.flatirons.assessment</groupId>
   <artifactId>flatirons-assessment</artifactId>
-  <packaging>pom</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>flatirons-assessment Maven Webapp</name>
-  <properties>
-    <jdk.version>21</jdk.version>
-  </properties>
+  <packaging>pom</packaging>
+  <name>flatirons-assessment</name>
+  <description>Aggregator only: triggers the build of all modules. Not a parent of any module.</description>
+
   <modules>
+    <module>common-service</module>
+    <module>interview-management-system</module>
+    <!-- Uncomment each module as you create it:
+    <module>user-management-service</module>
+    <module>notification-service</module>
+    <module>interview-service</module>
+    -->
   </modules>
-  <build>
-    <finalName>flatirons-assessment</finalName>
-  </build>
 </project>
