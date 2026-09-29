@@ -7,8 +7,10 @@ import org.gk.flatirons.assessment.common.exception.dto.response.ApiError;
 import org.gk.flatirons.assessment.common.exception.utils.ExceptionResponseMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -42,6 +44,16 @@ public class GlobalExceptionHandler {
                 .map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
                 .toList();
         return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.BAD_REQUEST, "Validation failed", request, details);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleUnreadable(HttpMessageNotReadableException httpMessageNotReadableException, HttpServletRequest request) {
+        return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.BAD_REQUEST, "One or More ENUM values are invalid", request, null);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> handleUnreadable(DataIntegrityViolationException dataIntegrityViolationException, HttpServletRequest request) {
+        return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.CONFLICT, "The request conflicts with existing data.", request, null);
     }
 
     @ExceptionHandler(Exception.class)

@@ -1,9 +1,11 @@
 package org.gk.flatirons.assessment.ims.utils;
 
+import org.gk.flatirons.assessment.ims.dto.response.CandidateDetail;
 import org.gk.flatirons.assessment.ims.dto.response.InterviewResponse;
 import org.gk.flatirons.assessment.ims.dto.response.InterviewerDetail;
 import org.gk.flatirons.assessment.ims.entity.Candidate;
 import org.gk.flatirons.assessment.ims.entity.Interview;
+import org.gk.flatirons.assessment.ims.entity.Interviewer;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -29,5 +31,22 @@ public final class ResponseMapper {
                 interview.getStatus(),
                 interview.getScheduledStart(),
                 interview.getScheduledEnd());
+    }
+
+    public CandidateDetail mapToCandidateResponseDto(Candidate candidate) {
+        return new CandidateDetail(
+                candidate.getId(),
+                candidate.getFullName(),
+                candidate.getEmail()
+        );
+    }
+
+    public InterviewerDetail mapToInterviewerDetailDto(Interviewer interviewer) {
+        return new InterviewerDetail(
+                interviewer.getId(),
+                interviewer.getFullName(),
+                interviewer.getEmail(),
+                interviewer.getDepartment()
+        );
     }
 }

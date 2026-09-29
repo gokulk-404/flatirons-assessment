@@ -1,5 +1,6 @@
 package org.gk.flatirons.assessment.ims.controller;
 
+
 import jakarta.validation.Valid;
 import org.gk.flatirons.assessment.ims.dto.request.ScheduleInterviewRequest;
 import org.gk.flatirons.assessment.ims.dto.response.InterviewResponse;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static org.springframework.http.HttpStatus.CREATED;
 
 @RestController
-@RequestMapping("/api/interviews")
+@RequestMapping("/interviews")
 public class InterviewController {
 
     private final InterviewService interviewService;
@@ -24,7 +25,7 @@ public class InterviewController {
 
     @PostMapping
     public ResponseEntity<InterviewResponse> schedule(@Valid @RequestBody ScheduleInterviewRequest request) {
-        InterviewResponse created = interviewService.schedule(request);
-        return ResponseEntity.status(CREATED).body(created);
+        InterviewResponse scheduledInterview = interviewService.schedule(request);
+        return ResponseEntity.status(CREATED).body(scheduledInterview);
     }
 }

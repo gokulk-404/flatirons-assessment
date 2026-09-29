@@ -1,13 +1,17 @@
 package org.gk.flatirons.assessment.ims.service;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.ResourceNotFoundException;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.SchedulingConflictException;
 import org.gk.flatirons.assessment.ims.constant.InterviewStatus;
+import org.gk.flatirons.assessment.ims.dto.request.CreateInterviewerRequest;
+import org.gk.flatirons.assessment.ims.dto.response.InterviewerDetail;
 import org.gk.flatirons.assessment.ims.entity.Interviewer;
 import org.gk.flatirons.assessment.ims.repository.InterviewRepository;
 import org.gk.flatirons.assessment.ims.repository.InterviewerRepository;
+import org.gk.flatirons.assessment.ims.utils.ResponseMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -23,10 +27,12 @@ public class InterviewerService {
 
     private final InterviewerRepository interviewerRepository;
     private final InterviewRepository interviewRepository;
+    private final ResponseMapper responseMapper;
 
-    public InterviewerService(InterviewerRepository interviewerRepository, InterviewRepository interviewRepository) {
+    public InterviewerService(InterviewerRepository interviewerRepository, InterviewRepository interviewRepository, ResponseMapper responseMapper) {
         this.interviewerRepository = interviewerRepository;
         this.interviewRepository = interviewRepository;
+        this.responseMapper = responseMapper;
     }
 
     public List<Interviewer> fetchAllInterviewersWithCountAndConflictValidation(@NotEmpty Set<Integer> interviewerIds, @NotNull Instant scheduleStart, @NotNull Instant scheduledEnd) {
@@ -55,5 +61,14 @@ public class InterviewerService {
         if (conflictExists) {
             throw new SchedulingConflictException("An interviewer already has an interview in this time slot");
         }
+    }
+
+    public InterviewerDetail createAndPersistNewInterviewer(@Valid CreateInterviewerRequest request) {
+        Interviewer interviewer = Interviewer.builder()
+                .fullName(request.fullName())
+                .email(request.emailId())
+                .department(request.department())
+                .build();
+        return responseMapper.mapToInterviewerDetailDto(interviewerRepository.save(interviewer));
     }
 }

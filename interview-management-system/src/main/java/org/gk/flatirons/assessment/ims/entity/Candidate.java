@@ -14,7 +14,7 @@ public class Candidate extends ImsUserBaseEntity {
     private String phone;
 
     @Column
-    private Integer experience;
+    private String experience;
 
     @Column(name = "skill_set")
     private String skills;
@@ -33,11 +33,11 @@ public class Candidate extends ImsUserBaseEntity {
         this.phone = phone;
     }
 
-    public Integer getExperience() {
+    public String getExperience() {
         return experience;
     }
 
-    public void setExperience(Integer experience) {
+    public void setExperience(String experience) {
         this.experience = experience;
     }
 
@@ -67,5 +67,62 @@ public class Candidate extends ImsUserBaseEntity {
     @Override
     public int hashCode() {
         return Objects.hash(getEmail());
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private String fullName;
+        private String email;
+        private String phone;
+        private String experience;
+        private String skills;
+        private String resumeUrl;
+
+        private Builder() {
+        }
+
+        public Builder fullName(String fullName) {
+            this.fullName = fullName;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder phone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
+        public Builder experience(String experience) {
+            this.experience = experience;
+            return this;
+        }
+
+        public Builder skills(String skills) {
+            this.skills = skills;
+            return this;
+        }
+
+        public Builder resumeUrl(String resumeUrl) {
+            this.resumeUrl = resumeUrl;
+            return this;
+        }
+
+        public Candidate build() {
+            Candidate candidate = new Candidate();
+            candidate.setFullName(this.fullName);
+            candidate.setEmail(this.email);
+            candidate.setPhone(this.phone);
+            candidate.setExperience(this.experience);
+            candidate.setSkills(this.skills);
+            candidate.setResumeUrl(this.resumeUrl);
+            return candidate;
+        }
     }
 }

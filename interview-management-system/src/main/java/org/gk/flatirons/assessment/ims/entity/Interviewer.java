@@ -39,4 +39,40 @@ public class Interviewer extends ImsUserBaseEntity {
     public int hashCode() {
         return Objects.hash(getEmail());
     }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static final class Builder {
+        private String fullName;
+        private String email;
+        private InterviewerDepartment department;
+
+        private Builder() {
+        }
+
+        public Builder fullName(String fullName) {
+            this.fullName = fullName;
+            return this;
+        }
+
+        public Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        public Builder department(InterviewerDepartment department) {
+            this.department = department;
+            return this;
+        }
+
+        public Interviewer build() {
+            Interviewer interviewer = new Interviewer();
+            interviewer.setFullName(this.fullName);
+            interviewer.setEmail(this.email);
+            interviewer.setDepartment(this.department);
+            return interviewer;
+        }
+    }
 }

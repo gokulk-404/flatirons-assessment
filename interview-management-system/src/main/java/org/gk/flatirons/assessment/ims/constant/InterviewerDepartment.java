@@ -7,5 +7,6 @@ public enum InterviewerDepartment {
     DESIGN,
     DEVOPS,
     DATA,
-    HR
+    HR,
+    SOFTWARE
 }
