@@ -1,11 +1,10 @@
 package org.gk.flatirons.assessment.ims.service;
 
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.transaction.Transactional;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.ResourceNotFoundException;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.SchedulingConflictException;
 import org.gk.flatirons.assessment.ims.constant.InterviewStatus;
+import org.gk.flatirons.assessment.ims.dto.request.BulkInterviewerCreateRequest;
 import org.gk.flatirons.assessment.ims.dto.request.CreateInterviewerRequest;
 import org.gk.flatirons.assessment.ims.dto.response.InterviewerDetail;
 import org.gk.flatirons.assessment.ims.entity.Interviewer;
@@ -13,7 +12,6 @@ import org.gk.flatirons.assessment.ims.repository.InterviewRepository;
 import org.gk.flatirons.assessment.ims.repository.InterviewerRepository;
 import org.gk.flatirons.assessment.ims.utils.ResponseMapper;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
 import java.util.HashSet;
@@ -22,7 +20,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@Validated
 public class InterviewerService {
 
     private final InterviewerRepository interviewerRepository;
@@ -35,7 +32,7 @@ public class InterviewerService {
         this.responseMapper = responseMapper;
     }
 
-    public List<Interviewer> fetchAllInterviewersWithCountAndConflictValidation(@NotEmpty Set<Integer> interviewerIds, @NotNull Instant scheduleStart, @NotNull Instant scheduledEnd) {
+    public List<Interviewer> fetchAllInterviewersWithCountAndConflictValidation(Set<Integer> interviewerIds, Instant scheduleStart, Instant scheduledEnd) {
         List<Interviewer> availableInterviewers = interviewerRepository.findAllByIdForInterviewSchedule(interviewerIds);
         validateMissingInterviewers(interviewerIds, availableInterviewers);
         validateNoInterviewerHasConflict(availableInterviewers, scheduleStart, scheduledEnd);
@@ -63,12 +60,24 @@ public class InterviewerService {
         }
     }
 
-    public InterviewerDetail createAndPersistNewInterviewer(@Valid CreateInterviewerRequest request) {
+    private Interviewer createAndPersistNewInterviewer(CreateInterviewerRequest request) {
         Interviewer interviewer = Interviewer.builder()
                 .fullName(request.fullName())
                 .email(request.emailId())
                 .department(request.department())
                 .build();
-        return responseMapper.mapToInterviewerDetailDto(interviewerRepository.save(interviewer));
+        return interviewerRepository.save(interviewer);
+    }
+
+    @Transactional
+    public InterviewerDetail createNewInterviewer(CreateInterviewerRequest request) {
+        return responseMapper.mapToInterviewerDetailDto(createAndPersistNewInterviewer(request));
+    }
+
+    @Transactional
+    public List<InterviewerDetail> createNewInterviewersBulk(BulkInterviewerCreateRequest request) {
+        return request.interviewers().stream()
+                .map(interviewerCreateRequest -> responseMapper.mapToInterviewerDetailDto(createAndPersistNewInterviewer(interviewerCreateRequest)))
+                .toList();
     }
 }

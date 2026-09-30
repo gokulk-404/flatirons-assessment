@@ -1,9 +1,11 @@
 package org.gk.flatirons.assessment.ims.service;
 
+import jakarta.transaction.Transactional;
 import jakarta.validation.constraints.NotNull;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.ResourceNotFoundException;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.SchedulingConflictException;
 import org.gk.flatirons.assessment.ims.constant.InterviewStatus;
+import org.gk.flatirons.assessment.ims.dto.request.BulkCandidateCreateRequest;
 import org.gk.flatirons.assessment.ims.dto.request.CreateCandidateRequest;
 import org.gk.flatirons.assessment.ims.dto.response.CandidateDetail;
 import org.gk.flatirons.assessment.ims.entity.Candidate;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
 import java.time.Instant;
+import java.util.List;
 
 @Service
 @Validated
@@ -46,7 +49,7 @@ public class CandidateService {
         }
     }
 
-    public CandidateDetail createAndPersistNewCandidate(CreateCandidateRequest request) {
+    private Candidate createAndPersistNewCandidate(CreateCandidateRequest request) {
         Candidate candidate = Candidate.builder()
                 .fullName(request.fullName())
                 .email(request.emailId())
@@ -55,6 +58,18 @@ public class CandidateService {
                 .skills(request.skills())
                 .resumeUrl(request.resumeUrl())
                 .build();
-        return responseMapper.mapToCandidateResponseDto(candidateRepository.save(candidate));
+        return candidateRepository.save(candidate);
+    }
+
+    @Transactional
+    public CandidateDetail createNewCandidate(CreateCandidateRequest request) {
+        return responseMapper.mapToCandidateResponseDto(createAndPersistNewCandidate(request));
+    }
+
+    @Transactional
+    public List<CandidateDetail> createNewCandidatesBulk(BulkCandidateCreateRequest request) {
+        return request.candidates().stream()
+                .map(candidateCreateRequest -> responseMapper.mapToCandidateResponseDto(createAndPersistNewCandidate(candidateCreateRequest)))
+                .toList();
     }
 }
