@@ -22,7 +22,7 @@ public class Feedback {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private Long id;
+    private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "interview_id")
@@ -44,11 +44,9 @@ public class Feedback {
     @Column(name = "status")
     private FeedbackStatus status;
 
-    public Feedback() {
-    }
+    public Feedback() {}
 
-
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
@@ -106,5 +104,55 @@ public class Feedback {
     @Override
     public int hashCode() {
         return getClass().hashCode();
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private Interview interview;
+        private Interviewer interviewer;
+        private Integer rating;
+        private String comments;
+        private FeedbackStatus status;
+
+        private Builder() {}
+
+        public Builder interview(Interview interview) {
+            this.interview = interview;
+            return this;
+        }
+
+        public Builder interviewer(Interviewer interviewer) {
+            this.interviewer = interviewer;
+            return this;
+        }
+
+        public Builder rating(Integer rating) {
+            this.rating = rating;
+            return this;
+        }
+
+        public Builder comments(String comments) {
+            this.comments = comments;
+            return this;
+        }
+
+        public Builder status(FeedbackStatus status) {
+            this.status = status;
+            return this;
+        }
+
+        public Feedback build() {
+            Feedback feedback = new Feedback();
+            feedback.interview = interview;
+            feedback.interviewer = interviewer;
+            feedback.rating = rating;
+            feedback.comments = comments;
+            feedback.status = status;
+            return feedback;
+        }
     }
 }

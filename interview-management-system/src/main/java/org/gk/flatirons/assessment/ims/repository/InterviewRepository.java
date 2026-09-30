@@ -1,15 +1,23 @@
 package org.gk.flatirons.assessment.ims.repository;
 
+import jakarta.persistence.LockModeType;
 import org.gk.flatirons.assessment.ims.constant.InterviewStatus;
 import org.gk.flatirons.assessment.ims.entity.Interview;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 
-public interface InterviewRepository extends JpaRepository<Interview, Integer> {
+public interface InterviewRepository extends JpaRepository<Interview, Integer>, JpaSpecificationExecutor<Interview> {
 
     @Query("""
             select count(i) > 0
@@ -36,4 +44,11 @@ public interface InterviewRepository extends JpaRepository<Interview, Integer> {
                                     @Param("status") InterviewStatus status,
                                     @Param("start") Instant start,
                                     @Param("end") Instant end);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    @Query("SELECT i from Interview i where id=:interviewId")
+    Optional<Interview> findByIdForFeedback(@Param("interviewId") Integer interviewId);
+
+    @EntityGraph(attributePaths = "candidate")
+    Page<Interview> findAll(Specification<Interview> spec, Pageable pageable);
 }

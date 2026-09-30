@@ -1,6 +1,7 @@
 package org.gk.flatirons.assessment.common.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+import org.gk.flatirons.assessment.common.exception.dto.customExceptions.FeedbackConflictException;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.ResourceNotFoundException;
 import org.gk.flatirons.assessment.common.exception.dto.customExceptions.SchedulingConflictException;
 import org.gk.flatirons.assessment.common.exception.dto.response.ApiError;
@@ -29,13 +30,18 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ApiError> handleNotFound(ResourceNotFoundException notFoundException, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException notFoundException, HttpServletRequest request) {
         return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.NOT_FOUND, notFoundException.getMessage(), request, null);
     }
 
     @ExceptionHandler(SchedulingConflictException.class)
-    public ResponseEntity<ApiError> handleConflict(SchedulingConflictException conflictException, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleSchedulingConflict(SchedulingConflictException conflictException, HttpServletRequest request) {
         return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.CONFLICT, conflictException.getMessage(), request, null);
+    }
+
+    @ExceptionHandler(FeedbackConflictException.class)
+    public ResponseEntity<ApiError> handleFeedbackConflict(FeedbackConflictException feedbackConflictException, HttpServletRequest request) {
+        return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.CONFLICT, feedbackConflictException.getMessage(), request, null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -52,7 +58,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ApiError> handleUnreadable(DataIntegrityViolationException dataIntegrityViolationException, HttpServletRequest request) {
+    public ResponseEntity<ApiError> handleDataViolations(DataIntegrityViolationException dataIntegrityViolationException, HttpServletRequest request) {
         return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.CONFLICT, "The request conflicts with existing data.", request, null);
     }
 
