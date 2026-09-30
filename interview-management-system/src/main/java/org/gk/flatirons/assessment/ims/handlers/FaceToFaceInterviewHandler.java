@@ -1,5 +1,6 @@
 package org.gk.flatirons.assessment.ims.handlers;
 
+import org.gk.flatirons.assessment.common.utils.RabbitMqUtils;
 import org.gk.flatirons.assessment.ims.constant.InterviewMode;
 import org.gk.flatirons.assessment.ims.entity.Interview;
 import org.slf4j.Logger;
@@ -11,12 +12,19 @@ public class FaceToFaceInterviewHandler implements InterviewModeBaseHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(FaceToFaceInterviewHandler.class);
 
+    private final RabbitMqUtils rabbitMqUtils;
+
+    public FaceToFaceInterviewHandler(RabbitMqUtils rabbitMqUtils) {
+        this.rabbitMqUtils = rabbitMqUtils;
+    }
+
     private void generateGatePass(Interview interview) {
         logger.info("Creating gate pass for interview {}", interview.getId());
     }
 
     private void triggerMailNotificationToParticipants(Interview interview) {
         logger.info("Triggering mail notification to participant {}", interview.getId());
+        rabbitMqUtils.send("interview.mail.notify", "Trigger Face to Face Interview Mail Notification");
     }
 
     @Override

@@ -16,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestControllerAdvice
@@ -32,6 +33,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ApiError> handleResourceNotFound(ResourceNotFoundException notFoundException, HttpServletRequest request) {
         return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.NOT_FOUND, notFoundException.getMessage(), request, null);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex, HttpServletRequest request) {
+        return exceptionResponseMapper.mapToExceptionResponse(HttpStatus.FORBIDDEN, "Access denied", request, List.of());
     }
 
     @ExceptionHandler(SchedulingConflictException.class)
