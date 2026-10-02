@@ -49,7 +49,7 @@ public class FeedbackService {
     @Transactional
     public FeedbackResponse submit(Integer interviewId, SubmitFeedbackRequest request) {
         Interview interview = interviewService.fetchInterviewForFeedback(interviewId);
-        Interviewer interviewer = validateAndGetMappedInterviewer(interview, interviewId);
+        Interviewer interviewer = validateAndGetMappedInterviewer(interview, request.interviewerId());
         Feedback feedback = createAndPersistNewFeedback(interview,interviewer, request);
         return responseMapper.mapToFeedbackResponseDto(feedback);
     }
