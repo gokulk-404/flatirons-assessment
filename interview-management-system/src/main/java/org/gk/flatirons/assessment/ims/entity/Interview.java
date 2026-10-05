@@ -30,7 +30,7 @@ public class Interview {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
+    @Column
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
